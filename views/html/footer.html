@@ -1,0 +1,8 @@
+  <div class="footer">
+   {if="DEV === true"}
+    <b>{$lang.dev_time}</b>: {function="round(microtime(true) - Framework\Core::$initial_data.time, 4)"} <b>{$lang.dev_ram}</b>: {function="roundsize((memory_get_usage() - Framework\Core::$initial_data.ram))"} <b>{$lang.dev_sql}</b>: {function="Framework\LittleDB::$count"}  <b>{$lang.dev_context}</b>: {function="Framework\Context::$count"}
+   {/if}
+  </div>
+  <script src="views/html/js/base.js"></script>
+ </body>
+</html>
