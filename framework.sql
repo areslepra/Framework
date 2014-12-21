@@ -41,10 +41,10 @@ CREATE TABLE IF NOT EXISTS `example` (
 --
 
 INSERT INTO `example` (`id`, `name`, `lastname`, `datetime`) VALUES
-(1, 'JÃ³se', 'Orellana', 1414676331),
-(2, 'Ernesto', 'Ouch', 1414676915),
-(3, 'Alexander', 'Eberle', 1414676915),
-(5, 'Nicolas', 'Venturini', 1414676956),
+(1, 'Jose', 'Ore', 1414676331),
+(2, 'Ouch', 'Cero Uno', 1414676915),
+(3, 'Alexander', 'Carlos', 1414676915),
+(5, 'Nicolas', 'Merlo', 1414676956),
 (8, 'Cody', 'Roodaka', 1414765486);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
