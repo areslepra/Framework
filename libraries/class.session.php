@@ -11,77 +11,62 @@ namespace Framework;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 
-final class Session Extends Component
+final class Session
  {
   /**
    * Instancia de LittleDB
-   * @var Object
+   * @var object
    */
-  protected static $use_database = true;
+  protected static $db = null;
 
   /**
-   * Datos de la sesión actual
+   * Configuración del componente
    * @var Array
    */
-  protected static $variables = array(
-   'hash' => null,
-   'user_id' => null,
-   'ip' => null,
-   'datetime' => null,
-   'use_cookies' => null);
-
-  /**
-   * Configuración de las sesiones
-   * @var Array
-   */
-  protected static $configuration = array(
-   'duration' => null,
-   'algorithm' => null,
-   'user_object' => null,
-   'user_fields' => null,
-   'cookie_life' => null,
-   'cookie_name' => null,
-   'cookie_path' => null,
-   'cookie_domain' => null);
-
+  protected static $configuration = array();
 
   /**
    * Objeto de usuario a gestionar
    * var Object
    */
-  protected $user = null;
+  public static $user = null;
 
   /**
    * Iniciamos la sesión
    * @return nothing
    */
-  public static function start()
+  final public static function init()
    {
-    if(!isset($_SESSION) || session_id() == '')
+    // Configuramos...
+    self::$configuration = get_config(str_replace('Framework\\', '', get_called_class()));
+    // Obtenemos una instancia de LDB para utilizar...
+    self::$db = LittleDB::get_instance();
+
+    if(!isset($_SESSION) OR session_id() == '')
      {
-      // Iniciamos datos predeterminados para la sesión
       session_start();
-      $_SESSION['hash'] = null;
-      $_SESSION['user_id'] = null;
-      $_SESSION['use_cookies'] = false;
-      $_SESSION['datetime'] = time();
+     }
+
+    // Iniciamos datos predeterminados para la sesión
+    if(!isset($_SESSION['hash']))
+     {
+      if(isset($_COOKIE[self::$configuration['cookie_name']]))
+       {
+        $_SESSION['hash'] = $_COOKIE[self::$configuration['cookie_name']];
+        $_SESSION['user_id'] = null;
+        $_SESSION['use_cookies'] = true;
+       }
+      else
+       {
+        $_SESSION['hash'] = null;
+        $_SESSION['user_id'] = null;
+        $_SESSION['use_cookies'] = false;
+       }
       $_SESSION['ip'] = ip2long($_SERVER['REMOTE_ADDR']);
      }
+    $_SESSION['datetime'] = time();
 
-    if(isset($_COOKIE[self::$configuration['cookie_name']]))
-     {
-      self::$variables['hash'] = $_COOKIE[self::$configuration['cookie_name']];
-      self::$variables['use_cookies'] = true;
-     }
-    elseif($_SESSION['hash'] !== null)
-     {
-      self::$variables['hash'] = $_SESSION['hash'];
-      self::$variables['use_cookies'] = false;
-     }
-
-    self::set_id();
-
-    Context::add('is_logged', array('Framework\Session', 'is_user_id'));
+    Context::add('is_logged', array('Framework\Session', 'is_session'));
    } // public static function start();
 
 
@@ -95,41 +80,54 @@ final class Session Extends Component
    */
   public static function set_id($value = null, $cookies = null)
    {
-    if(self::$variables['hash'] !== null && $_SESSION['hash'] = self::$variables['hash'] && $value == self::$variables['hash'])
+    if($value !== null)
      {
-      $hash = ($value !== null) ? hash(self::$configuration['algorithm'], $value) : self::$variables['hash'];
-      $cookies = (boolean) ($cookies !== null) ? $cookies : self::$variables['use_cookies'];
+      $hash = ($value !== null) ? hash(self::$configuration['algorithm'], $value) : $_SESSION['hash'];
+      $cookies = (boolean) ($cookies !== null) ? $cookies : $_SESSION['use_cookies'];
+
+      $end = false;
+      $session_sql = false;
 
       // De existir la sesión en la base de datos, la actualizamos. Èsto sólo
       // sucedería si el usuario ingresa desde otra computadora.
-      $query = self::$db->select('user_sessions', '*', array('hash' => $hash));
+      $query = self::$db->select(self::$configuration['session_table'], '*', array('hash' => $hash));
       if($query !== false)
        {
         if($_SESSION['ip'] == $query['ip']) // Dirección de IP
          {
           if(self::$configuration['duration'] > ($_SESSION['datetime'] - $query['datetime'])) // Vida
            {
-            $_SESSION['hash'] = $hash;
-            $_SESSION['user_id'] = $query['user_id'];
-            $_SESSION['datetime'] = time();
-            $_SESSION['use_cookies'] = $cookies;
-            return self::$db->update('user_sessions', array(
+            $session_sql = self::$db->update(self::$configuration['session_table'], array(
              'datetime' => $_SESSION['datetime'],
-             'use_cookies' => $cookies
-             ), array('hash' => $_SESSION['hash']));
-           }
-         }
-        return self::end();
+             'use_cookies' => $cookies), array('hash' => $_SESSION['hash']));
+           } else { $end = true; }
+         } else { $end = true; }
        }
       else
        {
         // Seteamos una nueva sesión
-        return self::$db->insert('user_sessions', array(
+        $session_sql = self::$db->insert(self::$configuration['session_table'], array(
          'hash' => $hash,
-         'user_id' => $id,
+         'user_id' => $value,
          'ip' => $_SESSION['ip'],
          'datetime' => $_SESSION['datetime'],
          'use_cookies' => $cookies));
+        echo 'insert';
+       }
+
+      if($session_sql !== false)
+       {
+        $_SESSION['hash'] = $hash;
+        $_SESSION['user_id'] = $query['user_id'];
+        $_SESSION['datetime'] = time();
+        $_SESSION['use_cookies'] = $cookies;
+
+        self::set_user_object();
+        return true;
+       }
+      else
+       {
+        return $end !== false ? false : self::end();
        }
      }
    } // public static function set_id();
@@ -142,9 +140,10 @@ final class Session Extends Component
     */
   private static function set_user_object()
    {
-    if(self::is_user_id)
+    if(self::is_session() === true)
      {
-      self::$user = Factory::create(self::$configuration['user_object'], self::$variables['user_id'], self::$configuration['user_fields'], true, true, false);
+      self::$user = Factory::create(self::$configuration['user_object'], $_SESSION['user_id'], self::$configuration['user_fields'], true, true);
+      self::$user = self::$user->get_array();
      }
    } // private static function set_user_object();
 
@@ -154,9 +153,9 @@ final class Session Extends Component
     * Chequeamos si la sesión es de un usuario válido
     * @return bool
     */
-  public static function is_user_id()
+  public static function is_session()
    {
-    return (self::$variables['user_id'] !== null);
+    return ($_SESSION['user_id'] !== null);
    } // private static function is_user_id()
 
 
@@ -168,7 +167,7 @@ final class Session Extends Component
   public static function end()
    {
     // Borramos la sesión por el lado de la base de datos.
-    $this->db->delete('sessions', array('hash' => $_SESSION['hash']), false);
+    self::$db->delete(self::$configuration['session_table'], array('hash' => $_SESSION['hash']), false);
     // Si existe una cookie, la destruímos
     if(isset($_COOKIE))
      {
@@ -189,5 +188,3 @@ final class Session Extends Component
 class Session_Exception Extends \Exception {} // class Session_Exception();
 
 // Iniciamos el componente
-Session::init();
-Session::start();
