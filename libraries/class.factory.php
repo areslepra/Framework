@@ -46,36 +46,47 @@ final class Factory
    */
   final public static function &create($model, $id = null, $specified_fields = null, $autoload = true, $protected = false)
    {
-    if(class_exists($model) === false)
+    if($model !== null)
      {
-      if(file_exists(MODELS_DIR.'class.'.strtolower($model).EXT) === true)
+      if(class_exists($model) === false)
        {
-        require_once(MODELS_DIR.'class.'.strtolower($model).EXT);
+        if(file_exists(MODELS_DIR.'class.'.strtolower($model).EXT) === true)
+         {
+          require_once(MODELS_DIR.'class.'.strtolower($model).EXT);
+         }
+        else
+         {
+          throw new Factory_Exception('No se ha podido cargar el modelo '.$model.'.');
+         }
+       }
+
+      // Nombre completo del Modelo
+      $modelname = '\Framework\Models\\'.$model;
+      // Clave por la cual el modelo será identificado en el arreglo de referencias.
+      $modelkey = $model.(($id !== null) ? '-'.$id : '');
+      if($protected === false && $id !== null)
+       {
+        if(isset(self::$models[$modelkey]) === false)
+         {
+          self::$models[$modelkey] = new $modelname($id, $specified_fields, $autoload);
+          if(self::$models[$modelkey] !== false) { ++self::$count; }
+          ++self::$count;
+         }
+        return self::$models[$modelkey];
        }
       else
        {
-        throw new Factory_Exception('No se ha podido cargar el modelo '.$model.'.');
+        if(isset(self::$handlers[$modelkey]) === false)
+         {
+          self::$handlers[$modelkey] = new $modelname($id, $specified_fields, $autoload);
+          if(self::$handlers[$modelkey] !== false) { ++self::$count; }
+         }
+        return self::$handlers[$modelkey];
        }
-     }
-
-    $modelname = '\Framework\Models\\'.$model;
-    if($protected === false && $id !== null)
-     {
-      if(isset(self::$models[$model.'-'.$id]) === false)
-       {
-        self::$models[$model.'-'.$id] = new $modelname($id, $specified_fields, $autoload);
-        ++self::$count;
-       }
-      return self::$models[$model.'-'.$id];
      }
     else
      {
-      if(isset(self::$handlers[$model]) === false)
-       {
-        self::$handlers[$model] = new $modelname($id, $specified_fields, $autoload);
-        ++self::$count;
-       }
-      return self::$handlers[$model];
+      throw new Factory_Exception('Se ha solicitado un nombre de Modelo nulo.');
      }
    } // final public static function create();
 
