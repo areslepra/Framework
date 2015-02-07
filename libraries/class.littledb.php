@@ -11,7 +11,26 @@
 
 namespace Framework;
 
+
+
 defined('ROOT') or exit('No tienes Permitido el acceso.');
+
+
+/**
+ * LDB: Función improvisada para el manejo de errores
+ * @param string $query Consulta que origina el error
+ * @param string $error Mensaje de error provisto por el servidor MySQL
+ * @return nothing
+ * @author Cody Roodaka <roodakazo@gmail.com>
+ */
+function LittleDB_Error($query, $error)
+ {
+  echo('<h2>Data Base Error</h2>'.(($query !== '') ?'<span>Error en la consulta <i>'.$query.'</i></br>' : '').'<b>'.$error.'</b></span>');
+  // throw new LDB_Exception('<h2>Data Base Error</h2>'.(($query !== '') ?'<span>Error en la consulta <i>'.$query.'</i></br>' : '').'<b>'.$error.'</b></span>');
+ } // function ldb_error();
+
+
+
 
 class LittleDB
  {
