@@ -334,11 +334,11 @@ final class Core
     // load_component('Cache');
     load_component('Controller');
     load_component('Context');
-    load_component('Session');
-    Session::init();
-    load_component('Controller');
     load_component('Factory');
     load_component('Model');
+    load_component('Controller');
+    load_component('Session');
+    Session::init();
     load_component('View');
    } // private static function load_libraries();
 

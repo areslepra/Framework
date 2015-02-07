@@ -53,17 +53,25 @@ final class Session
       if(isset($_COOKIE[self::$configuration['cookie_name']]))
        {
         $_SESSION['hash'] = $_COOKIE[self::$configuration['cookie_name']];
-        $_SESSION['user_id'] = null;
         $_SESSION['use_cookies'] = true;
        }
       else
        {
         $_SESSION['hash'] = null;
-        $_SESSION['user_id'] = null;
         $_SESSION['use_cookies'] = false;
        }
       $_SESSION['ip'] = ip2long($_SERVER['REMOTE_ADDR']);
      }
+
+    if(!isset($_SESSION['user_id']))
+     {
+      $_SESSION['user_id'] = null;
+     }
+    elseif($_SESSION['user_id'] !== null)
+     {
+      self::set_user_object();
+     }
+
     $_SESSION['datetime'] = time();
 
     Context::add('is_logged', array('Framework\Session', 'is_session'));
@@ -122,7 +130,11 @@ final class Session
         $_SESSION['datetime'] = time();
         $_SESSION['use_cookies'] = $cookies;
 
-        self::set_user_object();
+        if($cookies === true)
+         {
+          setcookie(self::$configuration['cookie_name'], $_SESSION['hash'], (time() + $configuration['cookie_life']), self::$configuration['cookie_path'], self::$configuration['cookie_domain']);
+         }
+
         return true;
        }
       else
@@ -140,7 +152,7 @@ final class Session
     */
   private static function set_user_object()
    {
-    if(self::is_session() === true)
+    if(self::$configuration['user_object'] !== null)
      {
       self::$user = Factory::create(self::$configuration['user_object'], $_SESSION['user_id'], self::$configuration['user_fields'], true, true);
       self::$user = self::$user->get_array();
@@ -155,7 +167,7 @@ final class Session
     */
   public static function is_session()
    {
-    return ($_SESSION['user_id'] !== null);
+    return (isset($_SESSION) AND $_SESSION['user_id'] !== null);
    } // private static function is_user_id()
 
 
@@ -171,7 +183,7 @@ final class Session
     // Si existe una cookie, la destruímos
     if(isset($_COOKIE))
      {
-      setcookie(self::$configuration['cookie_name'], $_SESSION['id'], (time() - $configuration['cookie_life']), self::$configuration['cookie_path'], self::$configuration['cookie_domain']);
+      setcookie(self::$configuration['cookie_name'], $_SESSION['hash'], (time() - self::$configuration['cookie_life']), self::$configuration['cookie_path'], self::$configuration['cookie_domain']);
       unset($_COOKIE);
      }
     // Destruímos la sesión por el lado del compilador.
