@@ -289,7 +289,7 @@ final class Core
      }
     else
      {
-      header('Location: '.url($new_route['controller'],  $new_route['value'], $new_route['method'], $new_route['page'], null));
+      header('Location: '.url($new_route['controller'], $new_route['method'], $new_route['value'], $new_route['page'], null));
      }
    } // public static function redirect();
 
@@ -314,31 +314,11 @@ final class Core
           if(Context::check(self::$avaiable_controllers[$controller][$method][0], self::$avaiable_controllers[$controller][$method][1]) === true)
            {
             self::$error = null;
-            return true;
-           }
-          else
-           {
-            self::$error = self::ROUTING_ERROR_CONTEXT;
-            return false;
-           }
-         }
-        else
-         {
-          self::$error = self::ROUTING_ERROR_METHOD;
-          return false;
-         }
-       }
-      else
-       {
-        self::$error = self::ROUTING_ERROR_CONTROLLER;
-        return false;
-       }
-     }
-    else
-     {
-      self::$error = self::ROUTING_ERROR_FILE;
-      return false;
-     }
+           } else { self::$error = self::ROUTING_ERROR_CONTEXT; }
+         } else { self::$error = self::ROUTING_ERROR_METHOD; }
+       } else { self::$error = self::ROUTING_ERROR_CONTROLLER; }
+     } else { self::$error = self::ROUTING_ERROR_FILE; }
+    return self::$error !== null ? false : true;
    } // private static function is_valid_route();
 
 
@@ -351,27 +331,14 @@ final class Core
    {
     // Precarga de LittleDB para su próximo uso por los modelos.
     load_component('LittleDB');
-
-    load_component('Component');
-
+    // load_component('Cache');
     load_component('Controller');
-
     load_component('Context');
-
-    // Cargamos, configuramos e iniciamos la sesión
     load_component('Session');
-
-
-    // Abstracción de controladores
+    Session::init();
     load_component('Controller');
-
-    // Fábrica de Modelos
     load_component('Factory');
-
-    // Modelo Base
     load_component('Model');
-
-    // Vistas
     load_component('View');
    } // private static function load_libraries();
 
