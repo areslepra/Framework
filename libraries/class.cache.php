@@ -4,8 +4,23 @@ namespace Framework;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 
-class Cache Extends Component
+class Cache
  {
+
+  /**
+   * Configuración del componente
+   * @var Array
+   */
+  protected static $configuration = array();
+
+  final public static function init()
+   {
+    self::$configuration = get_config(str_replace('Framework\\', '', get_called_class()));
+   } // final public static function init();
+
+
+
+
   public static function set($key, $value, $expires)
    {
     // Definimos variables

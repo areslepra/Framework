@@ -11,8 +11,20 @@ namespace Framework;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 
-final class View Extends Component
+final class View
  {
+  /**
+   * Configuración del componente
+   * @var Array
+   */
+  protected static $configuration = array();
+
+  /**
+   * Variables internas del componente
+   * @var Array
+   */
+  protected static $variables = array();
+
   /**
    * Arreglo con plantillas
    * @var array
@@ -27,6 +39,13 @@ final class View Extends Component
    'js' => array(),
    'css' => array(),
    'lang' => array());
+
+
+
+  final public static function init()
+   {
+    self::$configuration = get_config(str_replace('Framework\\', '', get_called_class()));
+   }
 
 
 
@@ -148,6 +167,7 @@ final class View Extends Component
       self::add_key('core_paths', array(
        'theme' => $dir_theme,
        'base' => $dir_base));
+      self::add_key('site', get_config('site'));
 
       // Instanciamos RainTPL
       require(THIRD_PARTY_LIBS_DIR.'class.raintpl.php');

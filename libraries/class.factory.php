@@ -13,13 +13,25 @@ use \Framework\Models;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 
-final class Factory Extends Component
+final class Factory
  {
   /**
    * Referencias de los modelos.
    * @var array
    */
+  protected static $models = array();
+
+  /**
+   * Referencias de los modelos.
+   * @var array
+   */
   protected static $handlers = array();
+
+  /**
+   * Conteo de modelos.
+   * @var integer
+   */
+  public static $count = 0;
 
 
 
@@ -49,17 +61,19 @@ final class Factory Extends Component
     $modelname = '\Framework\Models\\'.$model;
     if($protected === false && $id !== null)
      {
-      if(isset(self::$variables[$model.'-'.$id]) === false)
+      if(isset(self::$models[$model.'-'.$id]) === false)
        {
-        self::$variables[$model.'-'.$id] = new $modelname($id, $specified_fields, $autoload);
+        self::$models[$model.'-'.$id] = new $modelname($id, $specified_fields, $autoload);
+        ++self::$count;
        }
-      return self::$variables[$model.'-'.$id];
+      return self::$models[$model.'-'.$id];
      }
     else
      {
       if(isset(self::$handlers[$model]) === false)
        {
         self::$handlers[$model] = new $modelname($id, $specified_fields, $autoload);
+        ++self::$count;
        }
       return self::$handlers[$model];
      }

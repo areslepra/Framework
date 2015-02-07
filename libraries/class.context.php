@@ -11,13 +11,19 @@ namespace Framework;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 
-final class Context Extends Component
+final class Context
  {
   /**
    * Cantidad de Contextos o Alias cargados
    * @var integer
    */
   public static $count = 0;
+
+  /**
+   * Configuración del componente
+   * @var Array
+   */
+  protected static $callbacks = array();
 
   /**
    * Llamamos a la función definitoria del contexto.
@@ -39,9 +45,9 @@ final class Context Extends Component
        }
      }
 
-    if(array_key_exists($function, self::$variables) === true)
+    if(array_key_exists($function, self::$callbacks) === true)
      {
-      return call_user_func_array((array) self::$variables[$function][0], (($forced_arguments !== null AND is_array($forced_arguments)) ? (array) $forced_arguments : (array) self::$variables[$function][1] ));
+      return call_user_func_array((array) self::$callbacks[$function][0], (($forced_arguments !== null AND is_array($forced_arguments)) ? (array) $forced_arguments : (array) self::$callbacks[$function][1] ));
      }
     elseif($function === null)
      {
@@ -66,7 +72,7 @@ final class Context Extends Component
    {
     if(is_callable($function) === true)
      {
-      self::$variables[$name] = array($function, $arguments);
+      self::$callbacks[$name] = array($function, $arguments);
       ++self::$count;
      }
     else
