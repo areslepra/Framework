@@ -206,7 +206,7 @@ abstract class Model
    */
   protected function load_data()
    {
-    $temp = $this->db->select($this->table, (($this->specified_fields === null) ? $this->fields : array_intersect($specified_fields, $this->fields)), array($this->primary_key => $this->id));
+    $temp = $this->db->select($this->table, (($this->specified_fields === null) ? $this->fields : array_intersect($this->specified_fields, $this->fields)), array($this->primary_key => $this->id));
     if($temp !== false)
      {
       $this->data = $temp;
