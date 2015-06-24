@@ -163,6 +163,7 @@ final class View
       array_pop($dir_base);
       $dir_base = '/'.implode('/', $dir_base).'/';
 
+      self::add_key('site', get_config('site'));
       self::add_key('core_files', self::$files);
       self::add_key('core_paths', array(
        'theme' => $dir_theme,

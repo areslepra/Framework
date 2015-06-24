@@ -31,6 +31,14 @@ final class Session
    */
   public static $user = null;
 
+
+  const SUCCESS = 1;
+  const ERROR_INVALID_ID = 1;
+  const ERROR_UNRECOGNIZED_IP = 2;
+  const ERROR_TIMEOUT = 4;
+  const ERROR_SQL_INSERT = 5;
+  const ERROR_SQL_UPDATE = 6;
+
   /**
    * Iniciamos la sesión
    * @return nothing
@@ -62,17 +70,15 @@ final class Session
        }
       $_SESSION['ip'] = ip2long($_SERVER['REMOTE_ADDR']);
      }
-
-    if(!isset($_SESSION['user_id']))
-     {
-      $_SESSION['user_id'] = null;
-     }
-    elseif($_SESSION['user_id'] !== null)
-     {
-      self::set_user_object();
-     }
-
     $_SESSION['datetime'] = time();
+
+    if($_SESSION['hash'] !== null)
+     {
+      self::set_id();
+     }
+
+
+
 
     Context::add('is_logged', array('Framework\Session', 'is_session'));
    } // public static function start();
@@ -88,59 +94,58 @@ final class Session
    */
   public static function set_id($value = null, $cookies = null)
    {
-    if($value !== null)
+    $hash = ($value !== null) ? hash(self::$configuration['algorithm'], $value) : $_SESSION['hash'];
+    $cookies = (boolean) ($cookies !== null) ? $cookies : $_SESSION['use_cookies'];
+
+    // De existir la sesión en la base de datos, la actualizamos. Èsto sólo
+    // sucedería si el usuario ingresa desde otra computadora.
+    $query = self::$db->select(self::$configuration['session_table'], '*', array('hash' => $hash));
+    if($query !== false AND $query !== null)
      {
-      $hash = ($value !== null) ? hash(self::$configuration['algorithm'], $value) : $_SESSION['hash'];
-      $cookies = (boolean) ($cookies !== null) ? $cookies : $_SESSION['use_cookies'];
-
-      $end = false;
-      $session_sql = false;
-
-      // De existir la sesión en la base de datos, la actualizamos. Èsto sólo
-      // sucedería si el usuario ingresa desde otra computadora.
-      $query = self::$db->select(self::$configuration['session_table'], '*', array('hash' => $hash));
-      if($query !== false)
+      if($_SESSION['ip'] == $query['session_ip']) // Dirección de IP
        {
-        if($_SESSION['ip'] == $query['ip']) // Dirección de IP
+        if(self::$configuration['duration'] > ($_SESSION['datetime'] - $query['session_datetime'])) // Vida
          {
-          if(self::$configuration['duration'] > ($_SESSION['datetime'] - $query['datetime'])) // Vida
+          if(self::$db->update(self::$configuration['session_table'], array('session_datetime' => $_SESSION['datetime'], 'session_use_cookies' => $cookies), array('hash' => $_SESSION['hash'])) !== false)
            {
-            $session_sql = self::$db->update(self::$configuration['session_table'], array(
-             'datetime' => $_SESSION['datetime'],
-             'use_cookies' => $cookies), array('hash' => $_SESSION['hash']));
-           } else { $end = true; }
-         } else { $end = true; }
-       }
-      else
+            $result = self::SUCCESS;
+           } else { $result = self::ERROR_SQL_UPDATE; }
+         } else { $result = self::ERROR_TIMEOUT; }
+       } else { $result  = self::ERROR_UNRECOGNIZED_IP; }
+     }
+    else
+     {
+      // Seteamos una nueva sesión
+      if(self::$db->insert(self::$configuration['session_table'], array(
+       'hash' => $hash,
+       'user_id' => $value,
+       'session_ip' => $_SESSION['ip'],
+       'session_datetime' => $_SESSION['datetime'],
+       'session_use_cookies' => $cookies)) !== false) { $result = self::SUCCESS; }
+      else { $result = self::ERROR_SQL_INSERT; }
+     }
+
+    if($result === self::SUCCESS)
+     {
+      $_SESSION['hash'] = $hash;
+      $_SESSION['user_id'] = (!isset($query['user_id'])) ? $value : $query['user_id'];
+      $_SESSION['datetime'] = time();
+      $_SESSION['use_cookies'] = $cookies;
+      self::set_user_object();
+      if($cookies === true)
        {
-        // Seteamos una nueva sesión
-        $session_sql = self::$db->insert(self::$configuration['session_table'], array(
-         'hash' => $hash,
-         'user_id' => $value,
-         'ip' => $_SESSION['ip'],
-         'datetime' => $_SESSION['datetime'],
-         'use_cookies' => $cookies));
-        echo 'insert';
+        setcookie(self::$configuration['cookie_name'], $_SESSION['hash'], (time() + $configuration['cookie_life']), self::$configuration['cookie_path'], self::$configuration['cookie_domain']);
        }
 
-      if($session_sql !== false)
+      return true;
+     }
+    else
+     {
+      if($result === self::ERROR_UNRECOGNIZED_IP OR $result === self::ERROR_TIMEOUT OR $result === self::ERROR_SQL_UPDATE)
        {
-        $_SESSION['hash'] = $hash;
-        $_SESSION['user_id'] = $query['user_id'];
-        $_SESSION['datetime'] = time();
-        $_SESSION['use_cookies'] = $cookies;
-
-        if($cookies === true)
-         {
-          setcookie(self::$configuration['cookie_name'], $_SESSION['hash'], (time() + $configuration['cookie_life']), self::$configuration['cookie_path'], self::$configuration['cookie_domain']);
-         }
-
-        return true;
+        self::end();
        }
-      else
-       {
-        return $end !== false ? false : self::end();
-       }
+     return false;
      }
    } // public static function set_id();
 
@@ -167,7 +172,7 @@ final class Session
     */
   public static function is_session()
    {
-    return (isset($_SESSION) AND $_SESSION['user_id'] !== null);
+    return (isset($_SESSION) AND self::$user !== null);
    } // private static function is_user_id()
 
 
@@ -198,5 +203,3 @@ final class Session
  * @access private
  */
 class Session_Exception Extends \Exception {} // class Session_Exception();
-
-// Iniciamos el componente
