@@ -27,7 +27,7 @@ function LittleDB_Error($query, $error)
  {
   echo('<h2>Data Base Error</h2>'.(($query !== '') ?'<span>Error en la consulta <i>'.$query.'</i></br>' : '').'<b>'.$error.'</b></span>');
   // throw new LDB_Exception('<h2>Data Base Error</h2>'.(($query !== '') ?'<span>Error en la consulta <i>'.$query.'</i></br>' : '').'<b>'.$error.'</b></span>');
- }
+ } // function ldb_error();
 
 
 
@@ -83,11 +83,10 @@ class LittleDB
   /**
    * Constantes utilizadas en la actualización de columnas
    */
-  const ALL = '*';
   const ADD = '+';
   const REST = '-';
-  const FIELDS = 0;
-  const VALUES = 1;
+  const FIELDS = 'f';
+  const VALUES = 'v';
 
 
 
@@ -113,7 +112,7 @@ class LittleDB
 
     // Conectamos a la base de datos.
     $this->connect();
-   }
+   } // private function __construct();
 
 
 
@@ -124,7 +123,7 @@ class LittleDB
   public function __destruct()
    {
     return $this->disconect();
-   }
+   } // public function __destruct();
 
 
 
@@ -135,12 +134,13 @@ class LittleDB
   public function __clone()
    {
     return $this->error('', 'La clonación de este objeto LittleDB no está permitida.');
-   }
+   }  // public function __clone();
 
 
 
   /**
-   * Retornamos esta clase como una cadena.
+   * Si por alguna razón alguien necesita esta clase como un texto, retornamos
+   * texto.
    * @return string
    */
   public function __toString()
@@ -151,7 +151,7 @@ class LittleDB
       $cfg[] = $field.'='.$value;
      }
     return __CLASS__.'['.implode(';', $cfg).']';
-   }
+   } // public function __toString();
 
 
 
@@ -162,7 +162,7 @@ class LittleDB
   public function __invoke($table, $fields, $condition = null, $limit = 1)
    {
     return $this->select($query, $fields, $condition, $limit);
-   }
+   }  // public function __invoke();
 
 
 
@@ -178,7 +178,7 @@ class LittleDB
      'errors' => $this->errors,
      'prefix' => $this->prefix
      );
-   }
+   } // public function __sleep();
 
 
 
@@ -189,7 +189,7 @@ class LittleDB
   public function __wakeup()
    {
     $this->connect();
-   }
+   }  // public function __wakeup();
 
 
 
@@ -206,7 +206,7 @@ class LittleDB
       self::$instance = new LittleDB($config['host'], $config['user'], $config['password'], $config['database'], $config['prefix'], $config['logs_handler'], $config['errors_handler']);
      }
     return self::$instance;
-   }
+   } // public static function get_instance();
 
 
 
@@ -216,9 +216,8 @@ class LittleDB
    */
   private function connect()
    {
-    $this->conn = mysqli_connect($this->data['host'], $this->data['user'], $this->data['pass'], $this->data['name']) or exit('asd');
-
-   }
+    $this->conn = mysqli_connect($this->data['host'], $this->data['user'], $this->data['pass'], $this->data['name']) or $this->error('', 'No se pudo conectar al servidor MySQL');
+   } // private function connect();
 
 
 
@@ -228,8 +227,8 @@ class LittleDB
    */
   private function disconect()
    {
-    //return ($this->conn !== null) ? mysqli_close($this->conn) : true;
-   }
+    return ($this->conn !== null) ? mysqli_close($this->conn) : true;
+   } // private function connect();
 
 
 
@@ -263,7 +262,7 @@ class LittleDB
       ++self::$count;
      }
     return $return;
-   }
+   } // public function query();
 
 
 
@@ -296,7 +295,7 @@ class LittleDB
         return $query->fetch_assoc();
        }
      }
-   }
+   } // public function select();
 
 
 
@@ -332,7 +331,7 @@ class LittleDB
       return (!$query || $query == false) ? $this->error($cons) : $this->conn->insert_id;
      }
     else { return false; }
-   }
+   } // public function insert();
 
 
 
@@ -351,7 +350,7 @@ class LittleDB
       $query = $this->_query($cons);
       return (!$query || $query == false) ? $this->error($cons) : $this->conn->affected_rows;
      } else { return false; }
-   }
+   } // public function delete();
 
 
 
@@ -375,7 +374,7 @@ class LittleDB
       $query = $this->_query($cons);
       return (!$query || $query == false) ? $this->error($cons) : $this->conn->affected_rows;
      } else { return false; }
-   }
+   } // public function update();
 
 
 
@@ -392,7 +391,7 @@ class LittleDB
       call_user_func_array($this->logger, array($query));
      }
     return mysqli_query($this->conn, $query);
-   }
+   } // private function _query();
 
 
 
@@ -407,7 +406,7 @@ class LittleDB
      {
       call_user_func_array($this->errors, array($query, (($error !== null) ? $error : mysqli_error($this->conn)) ));
      }
-   }
+   } // function error();
 
 
 
@@ -443,7 +442,7 @@ class LittleDB
      {
       return '';
      }
-   }
+   } // private function _where();
 
 
 
@@ -472,7 +471,7 @@ class LittleDB
       $q = preg_replace("/\?/", $this->parse_input($param), $q, 1);
      }
     return $q;
-   }
+   } // protected function parse_vars();
 
 
   /**
@@ -505,8 +504,8 @@ class LittleDB
      {
       return '\''.mysqli_real_escape_string($this->conn, $object).'\'';
      }
-   }
- }
+   } // protected function parse_input();
+ } // class LittleDB();
 
 
 
@@ -568,7 +567,7 @@ class Query
         call_user_func_array($eh, array($query, mysqli_error($conn)));
        }
      }
-   }
+   } // function __construct();
 
 
 
@@ -580,7 +579,7 @@ class Query
   public function __destruct()
    {
     return $this->free();
-   }
+   } // public function __destruct();
 
 
 
@@ -592,7 +591,7 @@ class Query
   private function free()
    {
     return (is_resource($this->data)) ? $this->data->free() : true;
-   }
+   } // private function free();
 
 
 
@@ -613,9 +612,9 @@ class Query
      {
       return $this->result;
      }
-   }
+   } // public function fetch();
 
- }
+ } // class Query
 
 
 
@@ -624,4 +623,4 @@ class Query
  * @author Cody Roodaka <roodakazo@gmail.com>
  * @access private
  */
-class LittleDB_Exception Extends \Exception { }
+class LittleDB_Exception Extends \Exception { } // class LittleDB_Exception();

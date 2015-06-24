@@ -81,14 +81,13 @@ final class Core
    'controller' => null,
    'method' => null,
    'value' => null,
-   'value_str' => null,
    'page' => null);
 
   // Constantes que definen los errores en la carga del controlador
-  const ROUTING_ERROR_CONTEXT = 'routing_error_context';
-  const ROUTING_ERROR_FILE = 'routing_error_file';
-  const ROUTING_ERROR_CONTROLLER = 'routing_error_controller';
-  const ROUTING_ERROR_METHOD = 'routing_error_method';
+  const ROUTING_ERROR_CONTEXT = 1;
+  const ROUTING_ERROR_FILE = 2;
+  const ROUTING_ERROR_CONTROLLER = 3;
+  const ROUTING_ERROR_METHOD = 4;
 
   // Para hacer más dinámico el sistema, estas constantes son quienes definen
   // las claves en el arreglo $_GET que decidirán el trayecto del mismo.
@@ -175,12 +174,6 @@ final class Core
     if(isset($_GET[self::ROUTING_VALUE_VARIABLE]))
      {
       self::$target_routing['value'] = (int) $_GET[self::ROUTING_VALUE_VARIABLE];
-     }
-     
-    // Índice string para buscadores y otros
-    if(isset($_GET[self::ROUTING_VALUE_VARIABLE]))
-     {
-      self::$target_routing['value_str'] = $_GET[self::ROUTING_VALUE_VARIABLE];
      }
 
     // Página

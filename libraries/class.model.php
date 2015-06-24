@@ -301,7 +301,6 @@ abstract class Model
     if(is_int($id) === true)
      {
       $this->id = $id;
-      $this->modified_fields = array();
       return true;
      }
     else

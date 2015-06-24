@@ -30,7 +30,6 @@ abstract class Controller
     if($_SERVER['REQUEST_METHOD'] === 'POST')
      {
       $this->post = (array) $_POST;
-      $this->post = $this->filterEntities($this->post);
       $this->post_count = count($_POST);
      }
 
@@ -43,17 +42,6 @@ abstract class Controller
 
     $this->build_header();
    } // protected function __construct();
-   
-   private function filterEntities($array)
-   {
-    
-     foreach($array as $key => $valor)
-     {
-       $array[$key] = str_replace('<br />','[br]',nl2br(htmlentities($valor)));
-     }
-     return $array;
-    
-   }
 
 
 
