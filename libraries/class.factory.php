@@ -115,6 +115,11 @@ final class Factory
   final public static function create_from_array($target_ids = array(), $model, $fields = null, $autoload = true, $return_array = false)
    {
     $classes = array();
+
+    if(is_array($target_ids) === false)
+     {
+      $target_ids = array($target_ids);
+     }
     foreach($target_ids as $id)
      {
       $object = self::create($model, (int) $id, $fields, $autoload);
