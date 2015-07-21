@@ -1,0 +1,21 @@
+{
+    "name": "roodaka/framework",
+    "description": "Framework PHP",
+    "keywords": ["framework"],
+    "type": "project",
+    "license": "propietary",
+    "authors": [
+        {
+            "name": "Cody Roodaka",
+            "email": "roodakazo@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5",
+    },
+    "require-dev": {
+    },
+    "autoload": {
+    }
+}
