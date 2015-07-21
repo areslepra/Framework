@@ -3,7 +3,7 @@
     "description": "Framework PHP",
     "keywords": ["framework"],
     "type": "project",
-    "license": "propietary",
+    "license": "proprietary",
     "authors": [
         {
             "name": "Cody Roodaka",
@@ -12,7 +12,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5",
+        "php": ">=5"
     },
     "require-dev": {
     },
