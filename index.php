@@ -31,6 +31,9 @@ define('MODELS_DIR', ROOT.'models'.DS);
 define('THIRD_PARTY_LIBS_DIR', LIBRARIES_DIR.DS.'third_party'.DS);
 define('VIEWS_DIR', ROOT.'views'.DS);
 
+// Cargamos cargador de composer
+require(ROOT.'vendor'.DS.'autoload.php');
+
 // Cargamos las funciones básicas del núcleo
 require(FUNCTIONS_DIR.'core'.EXT);
 

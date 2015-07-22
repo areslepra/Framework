@@ -12,7 +12,8 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5"
+        "php": ">=5.3.0",
+        "hautelook/phpass": "dev-master"
     },
     "require-dev": {
     },
