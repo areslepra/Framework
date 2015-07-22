@@ -11,6 +11,8 @@ namespace Framework;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 
+use Rain\Tpl as RainTpl;
+
 final class View
  {
   /**
@@ -171,13 +173,12 @@ final class View
       self::add_key('site', get_config('site'));
 
       // Instanciamos RainTPL
-      require(THIRD_PARTY_LIBS_DIR.'class.raintpl.php');
-      $rain = new Third_Party\RainTPL();
+      $rain = new RainTpl();
 
       // Configuramos Rain para trabajar
-      Third_Party\raintpl::configure('base_url', $_SERVER['SERVER_NAME'].$dir_base);
-      Third_Party\raintpl::configure('tpl_dir', 'views'.DS.'html'.DS);
-      Third_Party\raintpl::configure('cache_dir', CACHE_DIR.'html'.DS);
+      RainTpl::configure('base_url', $_SERVER['SERVER_NAME'].$dir_base);
+      RainTpl::configure('tpl_dir', 'views'.DS.'html'.DS);
+      RainTpl::configure('cache_dir', CACHE_DIR.'html'.DS);
 
       $rain->assign('lang', self::load_language(self::$configuration['lang']));
       $rain->assign(self::$variables);
