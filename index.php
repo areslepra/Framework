@@ -28,7 +28,6 @@ define('CONTROLLERS_DIR', ROOT.'controllers'.DS);
 define('FUNCTIONS_DIR', ROOT.'functions'.DS);
 define('LIBRARIES_DIR', ROOT.'libraries'.DS);
 define('MODELS_DIR', ROOT.'models'.DS);
-define('THIRD_PARTY_LIBS_DIR', LIBRARIES_DIR.DS.'third_party'.DS);
 define('VIEWS_DIR', ROOT.'views'.DS);
 
 // Cargamos cargador de composer
