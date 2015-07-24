@@ -1,10 +1,10 @@
 <?php
 
-namespace Framework\Models;
+namespace Roodaka\Framework\Model;
 
-use Framework as F;
+use \Roodaka\Framework\Model;
 
-class Example extends F\Model
+class Example extends Model
  {
   /**
    * Tabla objetivo
@@ -28,7 +28,7 @@ class Example extends F\Model
 
   public function get_by_name($order = 'ASC', $page = 1, $limit = 10)
    {
-    $limits = paginate($page, $limit);
+    $limits = \Roodaka\Framework\paginate($page, $limit);
     $query = $this->db->query('SELECT '.$this->primary_key.' FROM '.$this->table.' ORDER BY name '.$order.' LIMIT '.$limits[0].', '.$limits[1]);
     if($query !== false)
      {

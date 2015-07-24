@@ -7,7 +7,7 @@
  * @access public
  */
 
-namespace Framework;
+namespace Roodaka\Framework;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 
@@ -46,7 +46,7 @@ final class Session
   final public static function init()
    {
     // Configuramos...
-    self::$configuration = get_config(str_replace('Framework\\', '', get_called_class()));
+    self::$configuration = get_class_config(get_called_class());
     // Obtenemos una instancia de LDB para utilizar...
     self::$db = LittleDB::get_instance();
 
@@ -80,7 +80,7 @@ final class Session
 
 
 
-    Context::add('is_logged', array('Framework\Session', 'is_session'));
+    Context::add('is_logged', array('\Roodaka\Framework\Session', 'is_session'));
    } // public static function start();
 
 

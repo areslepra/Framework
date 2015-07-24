@@ -1,33 +1,36 @@
 <?php
 
-namespace Framework\Controllers;
+namespace Roodaka\Framework\Controller;
 
-use \Framework as F;
+use \Roodaka\Framework\Controller;
+use \Roodaka\Framework\Core;
+use \Roodaka\Framework\Factory;
+use \Roodaka\Framework\View;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 
-class Home Extends F\Controller
+class Home Extends Controller
  {
 
   public function build_header()
    {
-    F\View::add_key('title', 'asd');
-    F\View::add_file('css', 'asd.js'); // Agregamos un archivo aleatorio
+    View::add_key('title', 'asd');
+    View::add_file('css', 'asd.js'); // Agregamos un archivo aleatorio
    }
 
 
 
   public function main()
    {
-    $model = load_model('Example');
+    $model = \Roodaka\Framework\load_model('Example');
 
     $array = (array) $model->get_by_name();
 
-    $result = F\Factory::create_from_array($array, 'Example', null, true, true);
+    $result = Factory::create_from_array($array, 'Example', null, true, true);
 
-    F\View::add_key('users', $result);
+    View::add_key('users', $result);
 
-    F\View::add_template('home');
+    View::add_template('home');
     //return Framework\Core::redirect('Other');
    }
 
@@ -45,17 +48,17 @@ class Home Extends F\Controller
         $user->name = $this->post['name'];
         $user->lastname = $this->post['lastname'];
 
-        return F\Core::redirect('home', 'main');
+        return Core::redirect('home', 'main');
        }
       else
        {
-        F\View::add_key('user', $user->get_array());
-        F\View::add_template('edit');
+        View::add_key('user', $user->get_array());
+        View::add_template('edit');
        }
      }
     else
      {
-      return F\Core::redirect('home', 'main');
+      return Core::redirect('home', 'main');
      }
    }
 
@@ -72,12 +75,12 @@ class Home Extends F\Controller
 
       if($new_user->save() === true)
        {
-        F\Core::redirect('home', 'main');
+        Core::redirect('home', 'main');
        }
      }
     else
      {
-      F\View::add_template('create');
+      View::add_template('create');
      }
    }
 
@@ -91,6 +94,6 @@ class Home Extends F\Controller
       $user = load_model('Example', (int) $id, null, true);
       $user->set_to_delete();
      }
-    return F\Core::redirect('home', 'main');
+    return Core::redirect('home', 'main');
    }
  } // class Home Extends Controller

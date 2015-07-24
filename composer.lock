@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8e24b60e0effe2200223bd4a1941bdc9",
+    "hash": "9c4d93e2fa053d91e15a8add9a4c02e9",
     "packages": [
         {
             "name": "hautelook/phpass",

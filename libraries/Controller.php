@@ -7,7 +7,7 @@
  * @access public
  */
 
-namespace Framework;
+namespace Roodaka\Framework;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 

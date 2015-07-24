@@ -36,10 +36,9 @@ require(ROOT.'vendor'.DS.'autoload.php');
 // Cargamos las funciones básicas del núcleo
 require(FUNCTIONS_DIR.'core'.EXT);
 
-set_exception_handler('exception_handler');
+set_exception_handler('\Roodaka\Framework\exception_handler');
 
 require(FUNCTIONS_DIR.'friendly'.EXT);
 
 // Cargamos e iniciamos el núcleo.
-load_component('Core');
-\Framework\Core::init($start);
+\Roodaka\Framework\Core::init($start);

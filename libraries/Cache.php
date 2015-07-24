@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework;
+namespace Roodaka\Framework;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 
@@ -15,7 +15,7 @@ class Cache
 
   final public static function init()
    {
-    self::$configuration = get_config(str_replace('Framework\\', '', get_called_class()));
+    self::$configuration = get_class_config(get_called_class());
    } // final public static function init();
 
 

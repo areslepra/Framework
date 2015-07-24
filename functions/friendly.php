@@ -1,11 +1,12 @@
-<?php defined('ROOT') or exit('No tienes Permitido el acceso.');
+<?php
+namespace Roodaka\Framework;
 /**
  * libraries/functions.friendly.php
  * Cody Roodaka 2011
  * Creado el 03/04/2011 01:17 a.m.
  */
 
-
+defined('ROOT') or exit('No tienes Permitido el acceso.');
 
 /**
  * Cortar un texto si es necesario

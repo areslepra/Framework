@@ -1,11 +1,12 @@
 <?php
-namespace Framework\Controllers;
+namespace Roodaka\Framework\Controller;
 
-use \Framework as F;
+use \Roodaka\Framework\Controller;
+use \Roodaka\Framework\Core;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 
-class Error Extends F\Controller
+class Error Extends Controller
  {
  public function build_header()
    {
@@ -14,6 +15,6 @@ class Error Extends F\Controller
 
   public function main()
    {
-    echo F\Core::$error;
+    echo Core::$error;
    }
  }

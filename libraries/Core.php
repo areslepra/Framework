@@ -7,7 +7,7 @@
  * @access public
  */
 
-namespace Framework;
+namespace Roodaka\Framework;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 
@@ -85,10 +85,10 @@ final class Core
    'page' => null);
 
   // Constantes que definen los errores en la carga del controlador
-  const ROUTING_ERROR_CONTEXT = 'routing_error_context';
-  const ROUTING_ERROR_FILE = 'routing_error_file';
-  const ROUTING_ERROR_CONTROLLER = 'routing_error_controller';
-  const ROUTING_ERROR_METHOD = 'routing_error_method';
+  const ROUTING_ERROR_CONTEXT = 1;
+  const ROUTING_ERROR_FILE = 2;
+  const ROUTING_ERROR_CONTROLLER = 3;
+  const ROUTING_ERROR_METHOD = 4;
 
   // Para hacer más dinámico el sistema, estas constantes son quienes definen
   // las claves en el arreglo $_GET que decidirán el trayecto del mismo.
@@ -224,13 +224,13 @@ final class Core
      }
 
     // DESPUÉS DE TODO ESTO, CARGAMOS EL CONTROLADOR!!!
-    require_once(CONTROLLERS_DIR.'class.'.strtolower(self::$target_routing['controller']).EXT);
+    //require_once(CONTROLLERS_DIR.'class.'.strtolower(self::$target_routing['controller']).EXT);
 
     // Hacemos la última validación.
 
-    $class = '\Framework\Controllers\\'.self::$target_routing['controller'];
+    $class = '\Roodaka\Framework\Controller\\'.self::$target_routing['controller'];
     $controller = new $class();
-    if(get_parent_class($controller) === 'Framework\Controller')
+    if(is_subclass_of($controller, '\Roodaka\Framework\Controller'))
      {
       call_user_func_array(array($controller, self::$target_routing['method']), array());
      }
@@ -310,9 +310,8 @@ final class Core
    */
   private static function is_valid_route($controller, $method = null)
    {
-    $controller = strtolower($controller);
     $method = ($method === null) ? self::$default_routing['method'] : $method;
-    if(is_file(CONTROLLERS_DIR.'class.'.$controller.EXT))
+    if(class_exists('\Roodaka\Framework\Controller\\'.$controller))
      {
       if(isset(self::$avaiable_controllers[$controller]))
        {
@@ -337,16 +336,16 @@ final class Core
   private static function load_components()
    {
     // Precarga de LittleDB para su próximo uso por los modelos.
-    load_component('LittleDB');
+    ///load_component('LittleDB');
     // load_component('Cache');
-    load_component('Controller');
-    load_component('Context');
-    load_component('Factory');
-    load_component('Model');
-    load_component('Controller');
-    load_component('Session');
+    ///load_component('Controller');
+    ///load_component('Context');
+    ///load_component('Factory');
+    ///load_component('Model');
+    ///load_component('Controller');
+    ///load_component('Session');
     Session::init();
-    load_component('View');
+    ///load_component('View');
    } // private static function load_libraries();
 
  } // final class Core();

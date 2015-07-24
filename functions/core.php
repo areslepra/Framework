@@ -1,9 +1,16 @@
-<?php defined('ROOT') or exit('No tienes Permitido el acceso.');
+<?php
+namespace Roodaka\Framework;
+
+defined('ROOT') or exit('No tienes Permitido el acceso.');
+
 /**
  * libs/functions.php
  * Cody Roodaka
  * Creado el 03/04/2011 01:17 a.m.
  */
+
+use \Roodaka\Framework\Core;
+use \Roodaka\Framework\Factory;
 
 
 /**
@@ -17,11 +24,11 @@
  */
 function url($controller, $method = null, $value = null, $page = null, $title = null)
  {
-  return 'index.php?'.Framework\Core::ROUTING_CONTROLLER_VARIABLE.'='.$controller
-  .(($value !== null) ? '&'.Framework\Core::ROUTING_VALUE_VARIABLE.'='.$value : '')
+  return 'index.php?'.Core::ROUTING_CONTROLLER_VARIABLE.'='.$controller
+  .(($value !== null) ? '&'.Core::ROUTING_VALUE_VARIABLE.'='.$value : '')
   .(($title !== null) ? '-'.$title : '')
-  .(($method !== null) ? '&'.Framework\Core::ROUTING_METHOD_VARIABLE.'='.$method : '')
-  .(((int) $page >= 1) ? '&'.Framework\Core::ROUTING_PAGENUMBER_VARIABLE.'='.$page : '');
+  .(($method !== null) ? '&'.Core::ROUTING_METHOD_VARIABLE.'='.$method : '')
+  .(((int) $page >= 1) ? '&'.Core::ROUTING_PAGENUMBER_VARIABLE.'='.$page : '');
  } // function url();
 
 
@@ -42,7 +49,7 @@ function load_component($target)
 
 function load_model($model, $id = null, $specified_fields = null, $autoload = true, $protected = false)
  {
-  return \Framework\Factory::create($model, $id, $specified_fields, $autoload, $protected);
+  return Factory::create($model, $id, $specified_fields, $autoload, $protected);
  }
 
 
@@ -97,12 +104,15 @@ function ldb_handle_error($query, $error)
 
 function get_config($file)
  {
-  return require_once(CONFIGURATIONS_DIR.$file.EXT);
+  return require_once(CONFIGURATIONS_DIR.strtolower($file).EXT);
  }
 
+function get_class_config($class)
+ {
+  return require_once(CONFIGURATIONS_DIR.strtolower(substr($class, strrpos($class, '\\')+1)).EXT);
+ }
 
-
-function get_routing_controller() { return Framework\Core::$target_routing['controller']; }
-function get_routing_method() { return Framework\Core::$target_routing['method']; }
-function get_routing_value() { return Framework\Core::$target_routing['value']; }
-function get_routing_page() { return Framework\Core::$target_routing['page']; }
+function get_routing_controller() { return Core::$target_routing['controller']; }
+function get_routing_method() { return Core::$target_routing['method']; }
+function get_routing_value() { return Core::$target_routing['value']; }
+function get_routing_page() { return Core::$target_routing['page']; }

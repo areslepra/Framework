@@ -7,9 +7,9 @@
  * @access public
  */
 
-namespace Framework;
+namespace Roodaka\Framework;
 
-use \Framework\Models;
+use \Roodaka\Framework\Models;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 
@@ -48,20 +48,13 @@ final class Factory
    {
     if($model !== null)
      {
-      if(class_exists($model) === false)
+      if(class_exists('\Roodaka\Framework\Model\\'.$model) === false)
        {
-        if(file_exists(MODELS_DIR.'class.'.strtolower($model).EXT) === true)
-         {
-          require_once(MODELS_DIR.'class.'.strtolower($model).EXT);
-         }
-        else
-         {
-          throw new Factory_Exception('No se ha podido cargar el modelo '.$model.'.');
-         }
+        throw new Factory_Exception('No se ha podido cargar el modelo '.$model.'.');
        }
 
       // Nombre completo del Modelo
-      $modelname = '\Framework\Models\\'.$model;
+      $modelname = '\Roodaka\Framework\Model\\'.$model;
       // Clave por la cual el modelo será identificado en el arreglo de referencias.
       $modelkey = $model.(($id !== null) ? '-'.$id : '');
       if($protected === false && $id !== null)

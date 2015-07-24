@@ -8,7 +8,7 @@
  * @access public
  */
 
-namespace Framework;
+namespace Roodaka\Framework;
 
 defined('ROOT') or exit('No tienes Permitido el acceso.');
 
@@ -195,7 +195,7 @@ abstract class Model
    */
   final public function __toString()
    {
-    return '<b>'.str_replace('Framework\Models\\', '', get_called_class()).'['.$this->id.']</b>: '.json_encode($this->data).'<br />';
+    return '<b>'.str_replace('\Roodaka\Framework\Models\\', '', get_called_class()).'['.$this->id.']</b>: '.json_encode($this->data).'<br />';
    } // final protected function __toString();
 
 

@@ -20,8 +20,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Roodaka\\Framework\\Controllers\\": "controllers/",
-            "Roodaka\\Framework\\Models\\": "models/",
+            "Roodaka\\Framework\\Controller\\": "controllers/",
+            "Roodaka\\Framework\\Model\\": "models/",
             "Roodaka\\Framework\\": "libraries/"
         }
     }

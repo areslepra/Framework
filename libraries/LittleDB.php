@@ -1,6 +1,6 @@
 <?php
 /**
- * Clase de Abstracción de bases de datos sencilla y de fácil implementación
+ * Clase de Abstracciï¿½n de bases de datos sencilla y de fï¿½cil implementaciï¿½n
  * @package class.littledb.php
  * @author Cody Roodaka <roodakazo@hotmail.com>
  * @author Ignacio Daniel Rostagno <ignaciorostagno@vijona.com.ar>
@@ -9,7 +9,7 @@
  * @see https://github.com/roodaka/littledb
  */
 
-namespace Framework;
+namespace Roodaka\Framework;
 
 
 
@@ -17,7 +17,7 @@ defined('ROOT') or exit('No tienes Permitido el acceso.');
 
 
 /**
- * LDB: Función improvisada para el manejo de errores
+ * LDB: Funciï¿½n improvisada para el manejo de errores
  * @param string $query Consulta que origina el error
  * @param string $error Mensaje de error provisto por el servidor MySQL
  * @return nothing
@@ -44,7 +44,7 @@ class LittleDB
   public $conn = null;
 
   /**
-   * Arreglo con los datos de conexión al servidor MySQL
+   * Arreglo con los datos de conexiï¿½n al servidor MySQL
    * @var array
    */
   protected $data = array(
@@ -56,13 +56,13 @@ class LittleDB
    );
 
   /**
-   * Función de registro
+   * Funciï¿½n de registro
    * @var array|string
    */
   protected $logger = null;
 
   /**
-   * Función de manejo de errores
+   * Funciï¿½n de manejo de errores
    * @var array|string
    */
   protected $errors = null;
@@ -81,7 +81,7 @@ class LittleDB
 
 
   /**
-   * Constantes utilizadas en la actualización de columnas
+   * Constantes utilizadas en la actualizaciï¿½n de columnas
    */
   const ALL = '*';
   const ADD = '+';
@@ -95,10 +95,10 @@ class LittleDB
    * Constructor de la clase
    * @param string $host Url o DNS del Servidor MySQL
    * @param string $user Usuario del servidor
-   * @param string &pass Contraseña del servidor
+   * @param string &pass Contraseï¿½a del servidor
    * @param string $db Nombre de la base de datos
-   * @param mixed $logger Función para el registro de datos
-   * @param mixed $errors Función para el manejo de errores
+   * @param mixed $logger Funciï¿½n para el registro de datos
+   * @param mixed $errors Funciï¿½n para el manejo de errores
    * @return nothing
    */
   private function __construct($host, $user, $pass, $db, $prefix = null, $logger = null, $errors = null)
@@ -129,12 +129,12 @@ class LittleDB
 
 
   /**
-   * No permitimos la clonación de LittleDB
+   * No permitimos la clonaciï¿½n de LittleDB
    * @return boolean
    */
   public function __clone()
    {
-    return $this->error('', 'La clonación de este objeto LittleDB no está permitida.');
+    return $this->error('', 'La clonaciï¿½n de este objeto LittleDB no estï¿½ permitida.');
    }
 
 
@@ -156,8 +156,8 @@ class LittleDB
 
 
   /**
-   * Si se invoca esta clase será con el fin de generar una consulta a la base
-   * de datos a modo de Alias a la función $this->select.
+   * Si se invoca esta clase serï¿½ con el fin de generar una consulta a la base
+   * de datos a modo de Alias a la funciï¿½n $this->select.
    */
   public function __invoke($table, $fields, $condition = null, $limit = 1)
    {
@@ -167,7 +167,7 @@ class LittleDB
 
 
   /**
-   * Retornamos la configuración de la clase cuando ésta es serializada.
+   * Retornamos la configuraciï¿½n de la clase cuando ï¿½sta es serializada.
    * @return array
    */
   public function __sleep()
@@ -183,7 +183,7 @@ class LittleDB
 
 
   /**
-   * Conectamos a la base de datos cuando ésta es deserializada
+   * Conectamos a la base de datos cuando ï¿½sta es deserializada
    * @return nothing
    */
   public function __wakeup()
@@ -194,7 +194,7 @@ class LittleDB
 
 
   /**
-   * Obtenemos una instancia de la clase, la primera vez pasamos los parámetros
+   * Obtenemos una instancia de la clase, la primera vez pasamos los parï¿½metros
    * para conectar.
    * @return object $instance Instancia de la base de datos.
    */
@@ -259,7 +259,7 @@ class LittleDB
      }
     else
      {
-      $return = new \Framework\Query($query, $this->errors, $this->conn);
+      $return = new Query($query, $this->errors, $this->conn);
       ++self::$count;
      }
     return $return;
@@ -271,8 +271,8 @@ class LittleDB
    * Seleccionamos campos de una tabla
    * @param string $table Nombre de la tabla objetivo
    * @param array|string $fields
-   * @param array $condition Condicionante para la selección
-   * @param array|integer $limit Límite de filas
+   * @param array $condition Condicionante para la selecciï¿½n
+   * @param array|integer $limit Lï¿½mite de filas
    * @return array
    */
   public function select($table, $fields, $condition = null, $limit = null)
@@ -304,13 +304,13 @@ class LittleDB
    * Insertar Datos en una tabla
    * @param string $table Nombre de la tabla
    * @param array $data Arreglo asosiativo con los datos
-   * @return integer|boolean Número de filas afectadas o False.
+   * @return integer|boolean Nï¿½mero de filas afectadas o False.
    */
   public function insert($table, $data)
    {
     if(is_array($data) === true)
      {
-      // Tenemos una inserción de múltiples filas
+      // Tenemos una inserciï¿½n de mï¿½ltiples filas
       if(isset($data[self::FIELDS]) && isset($data[self::VALUES]))
        {
         $fields = implode(', ', $data[self::FIELDS]);
@@ -341,7 +341,7 @@ class LittleDB
    * Borrar una fila
    * @param string $table nombre de la tabla
    * @param array $cond Condicionantes
-   * @return integer|boolean Número de filas afectadas o False.
+   * @return integer|boolean Nï¿½mero de filas afectadas o False.
    */
   public function delete($table, $cond)
    {
@@ -360,7 +360,7 @@ class LittleDB
    * @param string $table nombre de la tabla
    * @param array $array Arreglo asosiativo con los datos
    * @param array $cond Condicionantes
-   * @return integer|boolean Número de filas afectadas o False.
+   * @return integer|boolean Nï¿½mero de filas afectadas o False.
    */
   public function update($table, $array, $cond)
    {
@@ -476,8 +476,8 @@ class LittleDB
 
 
   /**
-   * Función que se encarga de determinar el tipo de datos para ver si debe
-   * aplicar la prevención de inyecciones SQL, si debe usar comillas o si es
+   * Funciï¿½n que se encarga de determinar el tipo de datos para ver si debe
+   * aplicar la prevenciï¿½n de inyecciones SQL, si debe usar comillas o si es
    * un literal ( funcion SQL ).
    * @param mixed $objet Objeto a analizar.
    * @return string Cadena segura.
@@ -489,7 +489,7 @@ class LittleDB
      {
       return (string) $object;
      }
-    elseif(is_int($object)) // Es un número?
+    elseif(is_int($object)) // Es un nï¿½mero?
      {
       return (int) $object;
      }
@@ -531,7 +531,7 @@ class Query
   private $result = array();
 
   /**
-   * Posición
+   * Posiciï¿½n
    * @var integer
    */
   private $position = 0;
@@ -547,8 +547,8 @@ class Query
   /**
    * Inicializar los datos
    * @param string $query Consulta SQL
-   * @param string $eh Nombre de la función que manipula los errores
-   * @param resource $conn Recurso de conección SQL
+   * @param string $eh Nombre de la funciï¿½n que manipula los errores
+   * @param resource $conn Recurso de conecciï¿½n SQL
    * @author Cody Roodaka <roodakazo@gmail.com>
    */
   public function __construct($query, $eh, $conn)
@@ -599,8 +599,8 @@ class Query
   /**
    * Devolvemos el array con los datos de la consulta
    * @param string $field Campo objetivo.
-   * @param string $default Valor a retornar si el campo no existe o está vacío.
-   * @return array|string Todos los campos o sólo uno
+   * @param string $default Valor a retornar si el campo no existe o estï¿½ vacï¿½o.
+   * @return array|string Todos los campos o sï¿½lo uno
    */
   public function fetch($field = null, $default = null)
    {
@@ -620,7 +620,7 @@ class Query
 
 
 /**
- * Excepción exclusiva de LittleDB.
+ * Excepciï¿½n exclusiva de LittleDB.
  * @author Cody Roodaka <roodakazo@gmail.com>
  * @access private
  */
